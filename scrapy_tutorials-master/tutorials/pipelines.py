@@ -214,7 +214,7 @@ from scrapy.exceptions import DropItem
 class DuplicatesPipeline(object):
 
     def __init__(self):
-        self.ids_seen = set() #注意到set型数据的应用
+        self.ids_seen = set() #注意到set型数据的应用ok
 
     def process_item(self, item, spider):
         judgeStr =item['name'][0] + item['total_price'][0] + item['unit_price'][0] + item['title'][0]

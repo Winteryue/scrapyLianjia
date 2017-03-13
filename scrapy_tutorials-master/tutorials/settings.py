@@ -76,7 +76,6 @@ ITEM_PIPELINES = {
     'tutorials.pipelines.DuplicatesPipeline' :200,
     'tutorials.pipelines.JsonWithEncodingPipeline' :300,
     'tutorials.pipelines.MySQLStoreCnblogsPipeline' :500,
-    #'tutorials.pipelines.MyResultPipeline' :700,
 }
 
 #MONGO_URI = 'mongodb://localhost:27017'
