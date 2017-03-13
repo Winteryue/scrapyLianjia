@@ -96,7 +96,7 @@ class MySQLStoreCnblogsPipeline(object):
     # 将每行更新或写入数据库中
         now = datetime.now().replace(microsecond=0).isoformat(' ')
         unitp = re.findall(r'\d+\.?\d*',item['unit_price'][0])
-        print("i am begin %s \n" %unitp)
+#        print("i am begin %s \n" %unitp)
         try:
             self._cur.execute("""
               insert into tj (name ,total_price, unit_price, title,  updated)
@@ -104,7 +104,7 @@ class MySQLStoreCnblogsPipeline(object):
               """, ( item['name'][0], item['total_price'][0], unitp[0], item['title'][0], now))
 
             isUpdate=self._cur.execute("select * from result where TO_DAYS(NOW()) - TO_DAYS(updated) = 0")
-            print(isUpdate)
+#            print(isUpdate)
             if isUpdate == 0 :
                 self._cur.execute("""
                   insert into tj_h (name ,total_price, unit_price, title,  updated)
@@ -119,7 +119,7 @@ class MySQLStoreCnblogsPipeline(object):
 
     def __del__(self):
         u'释放资源（系统GC自动调用）'
-        print "i am end \n"
+#        print "i am end \n"
         self.caculate()
         try:
             self._cur.close()
@@ -144,6 +144,7 @@ class MySQLStoreCnblogsPipeline(object):
 
             for oneName in allName :
                 MyName = oneName[0]
+#                print(MyName)
                 self._cur.execute("""select floor(avg(unit_price)) from tj
                             where name = %s; """ ,MyName )
                 average = self._cur.fetchone()
@@ -151,11 +152,13 @@ class MySQLStoreCnblogsPipeline(object):
                 number = self._cur.execute("""select * from tj
                             where name = %s; """ ,MyName )
 
+#                print(number)
                 self._cur.execute("""select min(unit_price) from tj
                             where name = %s; """ ,MyName )
                 min = self._cur.fetchone()
 
 
+#                print(min)
                 isValue=self._cur.execute(""" select average,number from result WHERE TO_DAYS(NOW()) - TO_DAYS(updated) = 1
                                   AND name = %s; """ ,MyName )
                 if isValue:
@@ -166,20 +169,24 @@ class MySQLStoreCnblogsPipeline(object):
                     increase = 0
                     incNum = 0
 
+#                print(increase)
                 isUpdate=self._cur.execute("""select * from result where TO_DAYS(NOW()) - TO_DAYS(updated) = 0
                             AND name = %s; """ ,MyName )
 
+#                print(isUpdate)
                 if isUpdate:
                     self._cur.execute("""
                       update result set  number = %s ,incNum = %s ,average = %s ,min =%s, increase = %s , updated = %s
                       where TO_DAYS(NOW()) - TO_DAYS(updated) = 0
                       AND name = %s; """
                       , ( number,incNum,average[0],min[0], increase, now,MyName))
+#                    print("i am update %s" %MyName)
                 else:
                     self._cur.execute("""
                       insert into result ( name,number,incNum,average,min, increase,updated)
-                      values(%s,%s, %s,%s, %s, %s)
+                      values(%s,%s,%s,%s,%s,%s,%s)
                       """, (  MyName ,number,incNum,average[0],min[0], increase, now))
+#                    print("i am insert %s" %MyName)
 
                 print("%s   %s  %s  %s  %s  %.2f%%"%(MyName,number,incNum,average[0],min[0],increase*100 ))
 
@@ -190,7 +197,7 @@ class MySQLStoreCnblogsPipeline(object):
             self._cur.execute("select *  from result where increase != 0 or incNum != 0")
             allLine = self._cur.fetchall()
             for oneLine in allLine :
-                print("%s   %d  %d  %d  %d  %.2f%%" \
+                print("%s   %s  %s  %s  %s  %.2f%%" \
                      %(oneLine[1],oneLine[2],oneLine[3],\
                        oneLine[4],oneLine[5],oneLine[6]*100))
 
