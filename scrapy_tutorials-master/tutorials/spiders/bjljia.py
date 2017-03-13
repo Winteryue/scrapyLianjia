@@ -11,60 +11,45 @@ class BjljiaSpider(CrawlSpider):
                        "tj.lianjia.com", \
                        "hz.lianjia.com",\
                        ]
-    start_urls = (
-#        'http://bj.lianjia.com/ershoufang/',
-#        'http://bj.lianjia.com/chengjiao/',
-###########################################天津################################
-#嘉海花园
-         'http://tj.lianjia.com/ershoufang/rsjiahaihuayuan/',
-#仁恒海河广场
-         'http://tj.lianjia.com/ershoufang/rsrenhenghaiheguangchang/',
-         'http://tj.lianjia.com/ershoufang/pg2rsrenhenghaiheguangchang/',
-#北岸华庭
-         'http://tj.lianjia.com/ershoufang/rsbeianhuating/',
-#壹街区
-        'http://tj.lianjia.com/ershoufang/rsjingdehuayuan/',
-#后现代城
-         'http://tj.lianjia.com/ershoufang/rsxuyuanxinju/',
 
+#       starurlStr(self,'tj','jiahaihuayuan',2)
+    def startUrlStr(city,house,pageNum):
+        urlList = []
+        i = 0
+        while i < pageNum :
+            i = i + 1
+            urlStr = 'http://'
+            urlStr = urlStr + city + '.lianjia.com/ershoufang/pg' + str(i) + 'rs' + house + '/'
+            urlList.append(urlStr)
+        return urlList
 
+#       ruleStr('jiahaihuayuan',2)
+    def ruleStr(house,pageNum):
+        ruleList = []
+        i = 0
+        while i < pageNum :
+            i = i + 1
+            tmpStr = 'ershoufang/'
+            tmpStr = tmpStr + 'pg' + str(i) + 'rs' + house + '/'
+            ruleList.append(Rule(LinkExtractor(allow= tmpStr,),callback='parse_pg_chengjiao_house_info',follow=True) )
+        return ruleList
 
-###########################################合肥################################
-        'http://hf.lianjia.com/ershoufang/rsyinxiangxihu/',
+####################################important####################################
+    start_urls = \
+                startUrlStr('tj','renhenghaiheguangchang',2) + \
+                 startUrlStr('tj','jiahaihuayuan',1) + \
+                 startUrlStr('tj','beianhuating',1) + \
+                 startUrlStr('tj','jingdehuayuan',1) + \
+                 startUrlStr('hf','shijichengzhenhuiyuan',2) + \
+                 startUrlStr('hf','yinxiangxihu',3)
 
-        'http://hf.lianjia.com/ershoufang/pg1rsshijichengzhenhuiyuan/',
-        'http://hf.lianjia.com/ershoufang/pg2rsshijichengzhenhuiyuan/',
-
-    )
-
-    rules = (
-#        Rule(LinkExtractor(allow='ershoufang/[0-9]*\.html',),callback='parse_one_house_info',follow=True),
-#        Rule(LinkExtractor(allow='ershoufang/rsjiahaihuayuan/[a-zA-Z0-9]*/',),callback='parse_pg_chengjiao_house_info',follow=True),
-        Rule(LinkExtractor(allow='ershoufang/rsjiahaihuayuan/',),callback='parse_pg_chengjiao_house_info',follow=True),
-
-        Rule(LinkExtractor(allow='ershoufang/rsrenhenghaiheguangchang/',),callback='parse_pg_chengjiao_house_info',follow=True),
-        Rule(LinkExtractor(allow='ershoufang/pg2rsrenhenghaiheguangchang/',),callback='parse_pg_chengjiao_house_info',follow=False),
-
-        Rule(LinkExtractor(allow='ershoufang/rsbeianhuating/',),callback='parse_pg_chengjiao_house_info',follow=False),
-
-        Rule(LinkExtractor(allow='ershoufang/rsjingdehuayuan/',),callback='parse_pg_chengjiao_house_info',follow=False),
-
-        Rule(LinkExtractor(allow='ershoufang/rsxuyuanxinju/',),callback='parse_pg_chengjiao_house_info',follow=False),
-
-        Rule(LinkExtractor(allow='ershoufang/rsyinxiangxihu/',),callback='parse_pg_chengjiao_house_info',follow=False),
-
-        Rule(LinkExtractor(allow='ershoufang/pg1rsshijichengzhenhuiyuan/',),callback='parse_pg_chengjiao_house_info',follow=False),
-        Rule(LinkExtractor(allow='ershoufang/pg2rsshijichengzhenhuiyuan/',),callback='parse_pg_chengjiao_house_info',follow=False),
-#        Rule(LinkExtractor(allow='ershoufang/[a-zA-Z0-9]*/',restrict_xpaths=('//div[@class="page-box house-lst-page-box"]'),),callback='parse_pg_chengjiao_house_info',follow=False),
-#        Rule(LinkExtractor(allow='ershoufang/[a-zA-Z0-9]*/',),callback='parse_pg_chengjiao_house_info',follow=True),
-#        Rule(LinkExtractor(allow='ershoufang/[0-9]*\.html',),callback='parse_chengjiao_house_info',follow=True),
-#        Rule(LinkExtractor(allow='ershoufang',),follow=True),
-#        Rule(LinkExtractor(allow='chengjiao/[a-zA-Z0-9]*/',),callback='parse_pg_chengjiao_house_info',follow=True),
-#        Rule(LinkExtractor(allow='chengjiao/[a-zA-Z0-9]*\.html',),callback='parse_chengjiao_house_info',follow=True),
-#        Rule(LinkExtractor(allow='chengjiao/[a-zA-Z0-9]*\.html',),callback='parse_one_house_info',follow=True),
-#        Rule(LinkExtractor(allow='chengjiao',),follow=True),
-
-    )
+    rules = \
+            ruleStr('renhenghaiheguangchang',2) + \
+            ruleStr('jiahaihuayuan',1) + \
+            ruleStr('beianhuating',1) + \
+            ruleStr('jingdehuayuan',1) + \
+            ruleStr('shijichengzhenhuiyuan',2) + \
+            ruleStr('yinxiangxihu',3)
 
 
     
