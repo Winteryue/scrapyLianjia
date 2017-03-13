@@ -156,33 +156,44 @@ class MySQLStoreCnblogsPipeline(object):
                 min = self._cur.fetchone()
 
 
-                isValue=self._cur.execute(""" select average from result WHERE TO_DAYS(NOW()) - TO_DAYS(updated) = 1
+                isValue=self._cur.execute(""" select average,number from result WHERE TO_DAYS(NOW()) - TO_DAYS(updated) = 1
                                   AND name = %s; """ ,MyName )
                 if isValue:
                     yestodayAverage = self._cur.fetchone()
                     increase = (float(average[0]) - float(yestodayAverage[0]))/float(yestodayAverage[0])
+                    incNum = int(number) - int(yestodayAverage[1])
                 else:
                     increase = 0
+                    incNum = 0
 
                 isUpdate=self._cur.execute("""select * from result where TO_DAYS(NOW()) - TO_DAYS(updated) = 0
                             AND name = %s; """ ,MyName )
 
                 if isUpdate:
                     self._cur.execute("""
-                      update result set  number = %s ,average = %s ,min =%s, increase = %s , updated = %s
+                      update result set  number = %s ,incNum = %s ,average = %s ,min =%s, increase = %s , updated = %s
                       where TO_DAYS(NOW()) - TO_DAYS(updated) = 0
                       AND name = %s; """
-                      , ( number,average[0],min[0], increase, now,MyName))
+                      , ( number,incNum,average[0],min[0], increase, now,MyName))
                 else:
                     self._cur.execute("""
-                      insert into result ( name,number,average,min, increase,updated)
+                      insert into result ( name,number,incNum,average,min, increase,updated)
                       values(%s,%s, %s,%s, %s, %s)
-                      """, (  MyName ,number,average[0],min[0], increase, now))
+                      """, (  MyName ,number,incNum,average[0],min[0], increase, now))
 
-                print("%s   %s  %s  %s  %.2f%%"%(MyName,number,average[0],min[0],increase*100 ))
-
+                print("%s   %s  %s  %s  %s  %.2f%%"%(MyName,number,incNum,average[0],min[0],increase*100 ))
 
                 self._conn.commit()
+
+            print("\n\n")
+
+            self._cur.execute("select *  from result where increase != 0 or incNum != 0")
+            allLine = self._cur.fetchall()
+            for oneLine in allLine :
+                print("%s   %d  %d  %d  %d  %.2f%%" \
+                     %(oneLine[1],oneLine[2],oneLine[3],\
+                       oneLine[4],oneLine[5],oneLine[6]*100))
+
         except MySQLdb.Error, e:
             print "Error %d: %s" % (e.args[0], e.args[1])
 

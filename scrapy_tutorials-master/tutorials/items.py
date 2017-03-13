@@ -9,7 +9,8 @@ import scrapy
 
 
 class CjHouseItem(scrapy.Item):
-    title = scrapy.Field() #小区 大小
+    name = scrapy.Field() #小区
+    title = scrapy.Field() #信息
     total_price = scrapy.Field() #总价
     unit_price = scrapy.Field() #单价
 
