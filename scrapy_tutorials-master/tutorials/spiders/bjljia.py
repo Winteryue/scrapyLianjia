@@ -7,13 +7,30 @@ from ..items import CjHouseItem
 
 class BjljiaSpider(CrawlSpider):
     name = "bjljia"
-    allowed_domains = ["tj.lianjia.com"]
+    allowed_domains = ["hf.lianjia.com",\
+                       "tj.lianjia.com", \
+                       "hz.lianjia.com",\
+                       ]
     start_urls = (
 #        'http://bj.lianjia.com/ershoufang/',
 #        'http://bj.lianjia.com/chengjiao/',
-#         'http://tj.lianjia.com/ershoufang/rsjiahaihuayuan/',
+###########################################天津################################
+#嘉海花园
+         'http://tj.lianjia.com/ershoufang/rsjiahaihuayuan/',
+#仁恒海河广场
          'http://tj.lianjia.com/ershoufang/rsrenhenghaiheguangchang/',
          'http://tj.lianjia.com/ershoufang/pg2rsrenhenghaiheguangchang/',
+#北岸华庭
+         'http://tj.lianjia.com/ershoufang/rsbeianhuating/',
+#壹街区
+        'http://tj.lianjia.com/ershoufang/rsjingdehuayuan/',
+#后现代城
+         'http://tj.lianjia.com/ershoufang/rsxuyuanxinju/',
+
+
+
+###########################################合肥################################
+        'http://hf.lianjia.com/ershoufang/rsyinxiangxihu/',
 
     )
 
@@ -21,8 +38,17 @@ class BjljiaSpider(CrawlSpider):
 #        Rule(LinkExtractor(allow='ershoufang/[0-9]*\.html',),callback='parse_one_house_info',follow=True),
 #        Rule(LinkExtractor(allow='ershoufang/rsjiahaihuayuan/[a-zA-Z0-9]*/',),callback='parse_pg_chengjiao_house_info',follow=True),
         Rule(LinkExtractor(allow='ershoufang/rsjiahaihuayuan/',),callback='parse_pg_chengjiao_house_info',follow=True),
+
         Rule(LinkExtractor(allow='ershoufang/rsrenhenghaiheguangchang/',),callback='parse_pg_chengjiao_house_info',follow=True),
         Rule(LinkExtractor(allow='ershoufang/pg2rsrenhenghaiheguangchang/',),callback='parse_pg_chengjiao_house_info',follow=False),
+
+        Rule(LinkExtractor(allow='ershoufang/rsbeianhuating/',),callback='parse_pg_chengjiao_house_info',follow=False),
+
+        Rule(LinkExtractor(allow='ershoufang/rsjingdehuayuan/',),callback='parse_pg_chengjiao_house_info',follow=False),
+
+        Rule(LinkExtractor(allow='ershoufang/rsxuyuanxinju/',),callback='parse_pg_chengjiao_house_info',follow=False),
+
+        Rule(LinkExtractor(allow='ershoufang/rsyinxiangxihu/',),callback='parse_pg_chengjiao_house_info',follow=False),
 #        Rule(LinkExtractor(allow='ershoufang/[a-zA-Z0-9]*/',restrict_xpaths=('//div[@class="page-box house-lst-page-box"]'),),callback='parse_pg_chengjiao_house_info',follow=False),
 #        Rule(LinkExtractor(allow='ershoufang/[a-zA-Z0-9]*/',),callback='parse_pg_chengjiao_house_info',follow=True),
 #        Rule(LinkExtractor(allow='ershoufang/[0-9]*\.html',),callback='parse_chengjiao_house_info',follow=True),
@@ -42,7 +68,8 @@ class BjljiaSpider(CrawlSpider):
         for index,list in enumerate(lists):
             item = CjHouseItem()
 #            item['page_url'] = list.css("a[class='img']::attr(href)").extract()
-            item['title'] = list.css("div[class='title'] a::text").extract()
+            item['name'] = list.css("div[class='houseInfo'] a::text").extract()
+            item['title'] = list.css("div[class='houseInfo']::text").extract()
 #            item['house_info'] = list.css("div[class='houseInfo']::text").extract()
 #            item['deal_data'] = list.css("div[class='dealDate']::text").extract()
             item['total_price'] = list.css("div[class='totalPrice'] span::text").extract()
