@@ -96,20 +96,21 @@ class MySQLStoreCnblogsPipeline(object):
     # 将每行更新或写入数据库中
         now = datetime.now().replace(microsecond=0).isoformat(' ')
         unitp = re.findall(r'\d+\.?\d*',item['unit_price'][0])
+        city = item['url'][0].split("/")[2].split(".")[0]
 #        print("i am begin %s \n" %unitp)
         try:
             self._cur.execute("""
-              insert into tj (name ,total_price, unit_price, title,  updated)
-              values(%s,%s, %s, %s, %s)
-              """, ( item['name'][0], item['total_price'][0], unitp[0], item['title'][0], now))
+              insert into tj (city,name ,total_price, unit_price, title,  updated)
+              values(%s,%s,%s, %s, %s, %s)
+              """, ( city,item['name'][0], item['total_price'][0], unitp[0], item['title'][0], now))
 
             isUpdate=self._cur.execute("select * from result where TO_DAYS(NOW()) - TO_DAYS(updated) = 0")
 #            print(isUpdate)
             if isUpdate == 0 :
                 self._cur.execute("""
-                  insert into tj_h (name ,total_price, unit_price, title,  updated)
-                  values(%s,%s, %s, %s, %s)
-                  """, ( item['name'][0], item['total_price'][0], unitp[0], item['title'][0], now))
+                  insert into tj_h (city,name ,total_price, unit_price, title,  updated)
+                  values(%s,%s,%s, %s, %s, %s)
+                  """, (city, item['name'][0], item['total_price'][0], unitp[0], item['title'][0], now))
 
             self._conn.commit()
         except MySQLdb.Error, e:
@@ -157,6 +158,9 @@ class MySQLStoreCnblogsPipeline(object):
                             where name = %s; """ ,MyName )
                 min = self._cur.fetchone()
 
+                self._cur.execute("""select city from tj
+                            where name = %s; """ ,MyName )
+                city = self._cur.fetchone()
 
 #                print(min)
                 isValue=self._cur.execute(""" select average,number from result WHERE TO_DAYS(NOW()) - TO_DAYS(updated) = 1
@@ -176,19 +180,19 @@ class MySQLStoreCnblogsPipeline(object):
 #                print(isUpdate)
                 if isUpdate:
                     self._cur.execute("""
-                      update result set  number = %s ,incNum = %s ,average = %s ,min =%s, increase = %s , updated = %s
+                      update result set  city = %s ,number = %s ,incNum = %s ,average = %s ,min =%s, increase = %s , updated = %s
                       where TO_DAYS(NOW()) - TO_DAYS(updated) = 0
                       AND name = %s; """
-                      , ( number,incNum,average[0],min[0], increase, now,MyName))
+                      , ( city[0],number,incNum,average[0],min[0], increase, now,MyName))
 #                    print("i am update %s" %MyName)
                 else:
                     self._cur.execute("""
-                      insert into result ( name,number,incNum,average,min, increase,updated)
-                      values(%s,%s,%s,%s,%s,%s,%s)
-                      """, (  MyName ,number,incNum,average[0],min[0], increase, now))
+                      insert into result (city, name,number,incNum,average,min, increase,updated)
+                      values(%s,%s,%s,%s,%s,%s,%s,%s)
+                      """, (  city[0],MyName ,number,incNum,average[0],min[0], increase, now))
 #                    print("i am insert %s" %MyName)
 
-                print("%s   %s  %s  %s  %s  %.2f%%"%(MyName,number,incNum,average[0],min[0],increase*100 ))
+                print("%s   %s   %s  %s  %s  %s  %.2f%%"%(city[0],MyName,number,incNum,average[0],min[0],increase*100 ))
 
                 self._conn.commit()
 
@@ -197,9 +201,9 @@ class MySQLStoreCnblogsPipeline(object):
             self._cur.execute("select *  from result where increase != 0 or incNum != 0")
             allLine = self._cur.fetchall()
             for oneLine in allLine :
-                print("%s   %s  %s  %s  %s  %.2f%%" \
+                print("%s   %s   %s  %s  %s  %s  %.2f%%" \
                      %(oneLine[1],oneLine[2],oneLine[3],\
-                       oneLine[4],oneLine[5],oneLine[6]*100))
+                       oneLine[4],oneLine[5],oneLine[6],oneLine[7]*100))
 
         except MySQLdb.Error, e:
             print "Error %d: %s" % (e.args[0], e.args[1])

@@ -39,7 +39,7 @@ class BjljiaSpider(CrawlSpider):
                 tmpStr = tmpStr  +  house + '/pg' + str(i) + '/'
 #                print("hahahahahahahahahaa")
 #                print(tmpStr)
-            ruleList.append(Rule(LinkExtractor(allow= tmpStr),callback='parse_pg_chengjiao_house_info',follow=True) )
+            ruleList.append(Rule(LinkExtractor(allow= tmpStr),callback='parse_pg_chengjiao_house_info',follow=False) )
         return ruleList
 
 ####################################important####################################
@@ -50,9 +50,22 @@ class BjljiaSpider(CrawlSpider):
 #                 startUrlStr('tj','jingdehuayuan',1,1) + \
 #                 startUrlStr('hf','shijichengzhenhuiyuan',2,1) + \
 #                 startUrlStr('hf','yinxiangxihu',3,1)
-    start_urls = startUrlStr('tj','guloujie',18,0) + startUrlStr('tj','renhenghaiheguangchang',2,1)
+#    start_urls = startUrlStr('tj','guloujie',18,0) + startUrlStr('tj','renhenghaiheguangchang',2,1)
+#    start_urls = \
+#        startUrlStr('tj','guloujie',18,0) + \
+#        startUrlStr('tj','guangfudao',9,0) + \
+#        startUrlStr('hf','guangfudao',9,0) + \
+#        startUrlStr('tj','uuuu',1,0)
+#
+    start_urls = startUrlStr('tj','guloujie',2,0) + startUrlStr('hf','shijichengzhenhuiyuan',2,1)
 
-    rules = ruleStr('guloujie',18,0) + ruleStr('renhenghaiheguangchang',2,1)
+    rules = ruleStr('guloujie',2,0) + ruleStr('shijichengzhenhuiyuan',2,1)
+#    rules = \
+#        ruleStr('guloujie',18,0) + \
+#        ruleStr('guangfudao',9,0) + \
+#        ruleStr('guloujie',18,0)
+#
+#    rules = ruleStr('guloujie',18,0) + ruleStr('renhenghaiheguangchang',2,1)
 #    rules = \
 #           ruleStr('renhenghaiheguangchang',2,1) + \
 #           ruleStr('jiahaihuayuan',1,1) + \
@@ -76,6 +89,7 @@ class BjljiaSpider(CrawlSpider):
             item['total_price'] = list.css("div[class='totalPrice'] span::text").extract()
 #            item['position_icon'] =  list.css("div[class='positionInfo']::text").extract()
             item['unit_price'] = list.css("div[class='unitPrice'] span::text").extract()
+            item['url'] = list.css("div[class='houseInfo'] a::attr(href)").extract()
 #            item['deal_house_txt'] = list.css("div[class='dealHouseInfo'] span::text").extract()
 #            item['sell_flag'] = 1
 #            print type(item['total_price'])

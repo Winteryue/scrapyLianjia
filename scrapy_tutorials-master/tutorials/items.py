@@ -13,6 +13,7 @@ class CjHouseItem(scrapy.Item):
     title = scrapy.Field() #信息
     total_price = scrapy.Field() #总价
     unit_price = scrapy.Field() #单价
+    url = scrapy.Field() #单价
 
 
 
