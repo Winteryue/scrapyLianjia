@@ -99,17 +99,19 @@ class MySQLStoreCnblogsPipeline(object):
         print("i am begin %s \n" %unitp)
         try:
             self._cur.execute("""
-              insert into tj (total_price, unit_price, title,  updated)
-              values(%s, %s, %s, %s)
-              """, ( item['total_price'][0], unitp[0], item['title'][0], now))
+              insert into tj (name ,total_price, unit_price, title,  updated)
+              values(%s,%s, %s, %s, %s)
+              """, ( item['name'][0], item['total_price'][0], unitp[0], item['title'][0], now))
 
-            self._cur.execute("""
-              insert into tj_h (total_price, unit_price, title,  updated)
-              values(%s, %s, %s, %s)
-              """, ( item['total_price'][0], unitp[0], item['title'][0], now))
+            isUpdate=self._cur.execute("select * from result where TO_DAYS(NOW()) - TO_DAYS(updated) = 0")
+            print(isUpdate)
+            if isUpdate == 0 :
+                self._cur.execute("""
+                  insert into tj_h (name ,total_price, unit_price, title,  updated)
+                  values(%s,%s, %s, %s, %s)
+                  """, ( item['name'][0], item['total_price'][0], unitp[0], item['title'][0], now))
 
             self._conn.commit()
-            self.MyName = item['title'][0]
         except MySQLdb.Error, e:
             print "Error %d: %s" % (e.args[0], e.args[1])
         return item
@@ -117,7 +119,7 @@ class MySQLStoreCnblogsPipeline(object):
 
     def __del__(self):
         u'释放资源（系统GC自动调用）'
-        print "i am dead \n"
+        print "i am end \n"
         self.caculate()
         try:
             self._cur.close()
@@ -136,28 +138,51 @@ class MySQLStoreCnblogsPipeline(object):
         now = datetime.now().replace(microsecond=0).isoformat(' ')
 
         try:
-            self._cur.execute("select floor(avg(unit_price)) from tj ")
-            average = self._cur.fetchone()
 
-            number = self._cur.execute("select * from tj ")
+            self._cur.execute("select DISTINCT name from tj ")
+            allName = self._cur.fetchall()
 
-            self._cur.execute("select min(unit_price) from tj ")
-            min = self._cur.fetchone()
+            for oneName in allName :
+                MyName = oneName[0]
+                self._cur.execute("""select floor(avg(unit_price)) from tj
+                            where name = %s; """ ,MyName )
+                average = self._cur.fetchone()
 
-            MyName = self.MyName.split(" ")[0]
-            self._cur.execute(""" select average from result WHERE TO_DAYS(NOW()) - TO_DAYS(updated) = 1
-                              AND name = %s; """ ,MyName )
-            yestodayAverage = self._cur.fetchone()
-            increase = (float(average[0]) - float(yestodayAverage[0]))/float(yestodayAverage[0])
-            print("i am %s" %yestodayAverage[0])
+                number = self._cur.execute("""select * from tj
+                            where name = %s; """ ,MyName )
 
-            self._cur.execute("""
-              insert into result ( name,number,average,min, increase,updated)
-              values(%s,%s, %s,%s, %s, %s)
-              """, (  MyName ,number,average[0],min[0], increase, now.split(" ")[0]))
+                self._cur.execute("""select min(unit_price) from tj
+                            where name = %s; """ ,MyName )
+                min = self._cur.fetchone()
 
 
-            self._conn.commit()
+                isValue=self._cur.execute(""" select average from result WHERE TO_DAYS(NOW()) - TO_DAYS(updated) = 1
+                                  AND name = %s; """ ,MyName )
+                if isValue:
+                    yestodayAverage = self._cur.fetchone()
+                    increase = (float(average[0]) - float(yestodayAverage[0]))/float(yestodayAverage[0])
+                else:
+                    increase = 0
+
+                isUpdate=self._cur.execute("""select * from result where TO_DAYS(NOW()) - TO_DAYS(updated) = 0
+                            AND name = %s; """ ,MyName )
+
+                if isUpdate:
+                    self._cur.execute("""
+                      update result set  number = %s ,average = %s ,min =%s, increase = %s , updated = %s
+                      where TO_DAYS(NOW()) - TO_DAYS(updated) = 0
+                      AND name = %s; """
+                      , ( number,average[0],min[0], increase, now,MyName))
+                else:
+                    self._cur.execute("""
+                      insert into result ( name,number,average,min, increase,updated)
+                      values(%s,%s, %s,%s, %s, %s)
+                      """, (  MyName ,number,average[0],min[0], increase, now))
+
+                print("%s   %s  %s  %s  %.2f%%"%(MyName,number,average[0],min[0],increase*100 ))
+
+
+                self._conn.commit()
         except MySQLdb.Error, e:
             print "Error %d: %s" % (e.args[0], e.args[1])
 
