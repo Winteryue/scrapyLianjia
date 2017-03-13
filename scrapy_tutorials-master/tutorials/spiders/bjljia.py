@@ -51,20 +51,18 @@ class BjljiaSpider(CrawlSpider):
 #                 startUrlStr('hf','shijichengzhenhuiyuan',2,1) + \
 #                 startUrlStr('hf','yinxiangxihu',3,1)
 #    start_urls = startUrlStr('tj','guloujie',18,0) + startUrlStr('tj','renhenghaiheguangchang',2,1)
-#    start_urls = \
-#        startUrlStr('tj','guloujie',18,0) + \
-#        startUrlStr('tj','guangfudao',9,0) + \
-#        startUrlStr('hf','guangfudao',9,0) + \
-#        startUrlStr('tj','uuuu',1,0)
-#
-    start_urls = startUrlStr('tj','guloujie',2,0) + startUrlStr('hf','shijichengzhenhuiyuan',2,1)
+    start_urls = \
+        startUrlStr('tj','guloujie',18,0) + \
+        startUrlStr('tj','guangfudao',9,0) + \
+        startUrlStr('hf','binhushiji',31,0)
 
-    rules = ruleStr('guloujie',2,0) + ruleStr('shijichengzhenhuiyuan',2,1)
-#    rules = \
-#        ruleStr('guloujie',18,0) + \
-#        ruleStr('guangfudao',9,0) + \
-#        ruleStr('guloujie',18,0)
-#
+#    start_urls = startUrlStr('tj','guloujie',1,0)
+#    rules = ruleStr('guloujie',1,0)
+    rules = \
+        ruleStr('guloujie',18,0) + \
+        ruleStr('guangfudao',9,0) + \
+        ruleStr('binhushiji',31,0)
+
 #    rules = ruleStr('guloujie',18,0) + ruleStr('renhenghaiheguangchang',2,1)
 #    rules = \
 #           ruleStr('renhenghaiheguangchang',2,1) + \

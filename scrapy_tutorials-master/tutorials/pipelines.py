@@ -133,6 +133,19 @@ class MySQLStoreCnblogsPipeline(object):
         u'关闭数据库连接'
         self.__del__()
 
+    def myAlign(self,string, length=0):
+        if length == 0:
+            return string
+        slen = len(string)
+        re = string
+        if isinstance(string, str):
+            placeholder = ' '
+        else:
+            placeholder = u'　'
+        while slen < length:
+            re += placeholder
+            slen += 1
+        return re
 
     def caculate(self):
 
@@ -142,8 +155,10 @@ class MySQLStoreCnblogsPipeline(object):
 
             self._cur.execute("select DISTINCT name from tj ")
             allName = self._cur.fetchall()
+            i=0
 
             for oneName in allName :
+                i= i + 1
                 MyName = oneName[0]
 #                print(MyName)
                 self._cur.execute("""select floor(avg(unit_price)) from tj
@@ -192,17 +207,22 @@ class MySQLStoreCnblogsPipeline(object):
                       """, (  city[0],MyName ,number,incNum,average[0],min[0], increase, now))
 #                    print("i am insert %s" %MyName)
 
-                print("%s   %s   %s  %s  %s  %s  %.2f%%"%(city[0],MyName,number,incNum,average[0],min[0],increase*100 ))
+                print("%-3d%-3s%s%-5s%-5s%-8s%-8s%.2f%%"%(i,city[0],self.myAlign(MyName,10),number,incNum,average[0],min[0],increase*100 ))
 
                 self._conn.commit()
 
             print("\n\n")
 
-            self._cur.execute("select *  from result where increase != 0 or incNum != 0")
+            self._cur.execute("select *  from result where (increase != 0 or incNum != 0) and TO_DAYS(NOW()) - TO_DAYS(updated) = 0")
             allLine = self._cur.fetchall()
+            i = 0
             for oneLine in allLine :
-                print("%s   %s   %s  %s  %s  %s  %.2f%%" \
-                     %(oneLine[1],oneLine[2],oneLine[3],\
+                i = i + 1
+#                print("%2d %s %-25S%-5S%-5s  %s  %s  %.2f%%" \
+#                     %(i,oneLine[1],oneLine[2],oneLine[3],\
+#                       oneLine[4],oneLine[5],oneLine[6],oneLine[7]*100))
+                print("%-3d%-3s%s%-5s%-5s%-8s%-8s%.2f%%" \
+                     %(i,oneLine[1],self.myAlign(oneLine[2],10),oneLine[3],\
                        oneLine[4],oneLine[5],oneLine[6],oneLine[7]*100))
 
         except MySQLdb.Error, e:
