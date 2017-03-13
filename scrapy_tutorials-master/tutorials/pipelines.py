@@ -208,3 +208,21 @@ class MySQLStoreCnblogsPipeline(object):
         pass
 
 
+
+from scrapy.exceptions import DropItem
+
+class DuplicatesPipeline(object):
+
+    def __init__(self):
+        self.ids_seen = set() #注意到set型数据的应用
+
+    def process_item(self, item, spider):
+        judgeStr =item['name'][0] + item['total_price'][0] + item['unit_price'][0] + item['title'][0]
+
+        if judgeStr in self.ids_seen:
+            raise DropItem("Duplicate item found: %s" % item)
+        else:
+            self.ids_seen.add(judgeStr)
+            return item
+
+

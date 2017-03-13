@@ -73,6 +73,7 @@ DOWNLOAD_DELAY = 1
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
 #   'tutorials.pipelines.MongoPipeline': 300,
+    'tutorials.pipelines.DuplicatesPipeline' :200,
     'tutorials.pipelines.JsonWithEncodingPipeline' :300,
     'tutorials.pipelines.MySQLStoreCnblogsPipeline' :500,
     #'tutorials.pipelines.MyResultPipeline' :700,
