@@ -42,38 +42,42 @@ class BjljiaSpider(CrawlSpider):
             ruleList.append(Rule(LinkExtractor(allow= tmpStr),callback='parse_pg_chengjiao_house_info',follow=False) )
         return ruleList
 
-####################################important####################################
-#    start_urls = \
-#                startUrlStr('tj','renhenghaiheguangchang',2,1) + \
-#                 startUrlStr('tj','jiahaihuayuan',1,1) + \
-#                 startUrlStr('tj','beianhuating',1,1) + \
-#                 startUrlStr('tj','jingdehuayuan',1,1) + \
-#                 startUrlStr('hf','shijichengzhenhuiyuan',2,1) + \
-#                 startUrlStr('hf','yinxiangxihu',3,1)
-#    start_urls = startUrlStr('tj','guloujie',18,0) + startUrlStr('tj','renhenghaiheguangchang',2,1)
+####################################important##################################
+
     start_urls = \
-        startUrlStr('tj','guloujie',18,0) + \
-        startUrlStr('tj','guangfudao',9,0) + \
-        startUrlStr('hf','binhushiji',31,0)
+                startUrlStr('tj','renhenghaiheguangchang',2,1) + \
+                startUrlStr('tj','jiahaihuayuan',1,1) + \
+                startUrlStr('tj','beianhuating',1,1) + \
+                startUrlStr('tj','jingdehuayuan',1,1) + \
+                startUrlStr('tj','fulichengtianlinyuan',1,1) + \
+                startUrlStr('hf','shijichengzhenhuiyuan',2,1) + \
+                startUrlStr('hf','yinxiangxihu',3,1)
+
+    rules = \
+          ruleStr('renhenghaiheguangchang',2,1) + \
+          ruleStr('jiahaihuayuan',1,1) + \
+          ruleStr('beianhuating',1,1) + \
+          ruleStr('jingdehuayuan',1,1) + \
+          ruleStr('fulichengtianlinyuan',1,1) + \
+          ruleStr('shijichengzhenhuiyuan',2,1) + \
+          ruleStr('yinxiangxihu',3,1)
+
+
+#    start_urls = startUrlStr('tj','guloujie',18,0) + startUrlStr('tj','renhenghaiheguangchang',2,1)
+#     start_urls = \
+#         startUrlStr('tj','guloujie',18,0) + \
+#         startUrlStr('tj','guangfudao',9,0) + \
+#         startUrlStr('hf','binhushiji',31,0)
 
 #    start_urls = startUrlStr('tj','guloujie',1,0)
 #    rules = ruleStr('guloujie',1,0)
-    rules = \
-        ruleStr('guloujie',18,0) + \
-        ruleStr('guangfudao',9,0) + \
-        ruleStr('binhushiji',31,0)
+#     rules = \
+#         ruleStr('guloujie',18,0) + \
+#         ruleStr('guangfudao',9,0) + \
+#         ruleStr('binhushiji',31,0)
 
 #    rules = ruleStr('guloujie',18,0) + ruleStr('renhenghaiheguangchang',2,1)
-#    rules = \
-#           ruleStr('renhenghaiheguangchang',2,1) + \
-#           ruleStr('jiahaihuayuan',1,1) + \
-#           ruleStr('beianhuating',1,1) + \
-#           ruleStr('jingdehuayuan',1,1) + \
-#           ruleStr('shijichengzhenhuiyuan',2,1) + \
-#           ruleStr('yinxiangxihu',3,1)
 
-
-    
     def parse_pg_chengjiao_house_info(self,response):
         lists = response.css('ul[class="sellListContent"] li')
         items = []
