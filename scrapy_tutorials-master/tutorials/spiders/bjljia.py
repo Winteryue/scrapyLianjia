@@ -50,8 +50,13 @@ class BjljiaSpider(CrawlSpider):
                 startUrlStr('tj','beianhuating',1,1) + \
                 startUrlStr('tj','jingdehuayuan',1,1) + \
                 startUrlStr('tj','fulichengtianlinyuan',1,1) + \
+                startUrlStr('tj','xuyuanxinju',2,1) + \
+                startUrlStr('tj','xiangxieli',1,1) + \
                 startUrlStr('hf','shijichengzhenhuiyuan',2,1) + \
-                startUrlStr('hf','yinxiangxihu',3,1)
+                startUrlStr('hf','yinxiangxihu',3,1) + \
+                startUrlStr('hz','qiantangrenjia',1,1) + \
+                startUrlStr('hz','yaojiangwendingyuan',1,1) + \
+                startUrlStr('hz','qiantangmingdu',1,1)
 
     rules = \
           ruleStr('renhenghaiheguangchang',2,1) + \
@@ -59,8 +64,13 @@ class BjljiaSpider(CrawlSpider):
           ruleStr('beianhuating',1,1) + \
           ruleStr('jingdehuayuan',1,1) + \
           ruleStr('fulichengtianlinyuan',1,1) + \
+          ruleStr('xuyuanxinju',2,1) + \
+          ruleStr('xiangxieli',1,1) + \
           ruleStr('shijichengzhenhuiyuan',2,1) + \
-          ruleStr('yinxiangxihu',3,1)
+          ruleStr('yinxiangxihu',3,1) + \
+          ruleStr('qiantangrenjia',1,1) + \
+          ruleStr('yaojiangwendingyuan',1,1) + \
+          ruleStr('qiantangmingdu',1,1)
 
 
 #    start_urls = startUrlStr('tj','guloujie',18,0) + startUrlStr('tj','renhenghaiheguangchang',2,1)
